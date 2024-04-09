@@ -1,6 +1,5 @@
 import scrapy
 from scrapy import FormRequest
-import time
 import pandas as pd
 
 class SchoolspiderSpider(scrapy.Spider):
@@ -10,10 +9,9 @@ class SchoolspiderSpider(scrapy.Spider):
 
 
     def parse(self, response):
-        class_list =[]
         requests = {
             '__EVENTTARGET': 'dnn$ctr3413$TimeTableView$btnTimeTable',
-            'dnn$ctr3413$TimeTableView$ClassesList': '27',
+            'dnn$ctr3413$TimeTableView$ClassesList': '1',
             'dnn$ctr3413$TimeTableView$ControlId':'1',
         }
         yield FormRequest.from_response(response, formdata=requests, callback=self.parse_school)
@@ -29,53 +27,11 @@ class SchoolspiderSpider(scrapy.Spider):
 
     def parse_school(self, response):
 
-        timetable_table = response.css('table.TTTable')
+        place_holder_data = response.css("div.PlaceHolder").getall() # Extract the HTML code of the div.PlaceHolder element
 
-        if timetable_table:
-            rows = timetable_table.css('tr')
-            data = []
-            for row in rows:
-                cells = row.css('td')
-                row_data = []
-                for cell in cells:
-                    cell_data = cell.css('::text').get()
-                    row_data.append(cell_data.strip() if cell_data else '')  # Strip whitespace and handle empty cells
-                data.append(row_data)
-
-            df = pd.DataFrame(data)
-            df.to_csv('timetable.csv', index=False, header=False, encoding='utf-8-sig')
-            self.logger.info('Timetable data saved to timetable.csv')
+        if place_holder_data:
+            with open("school.html", "w", encoding="utf-8") as f: 
+                f.write("\n".join(place_holder_data)) # Write the HTML code to a file
         else:
-            self.logger.info('Timetable table not found in the response')
+            self.logger.warning("No data found in div.PlaceHolder") # Log a warning message if no data is found
 
-        """timetable_table = response.css('table.TTTable')
-
-        if timetable_table:
-            rows = timetable_table.css('tr')
-            for row in rows:
-                cells = row.css('td')
-                for cell in cells:
-                    # Extract data from each cell as needed
-                    cell_data = cell.css('::text').get()
-                    print(cell_data)
-        else:
-            self.logger.info('Timetable table not found in the response')"""
-
-
-        #table_rows = response.css("tr::text").getall()
-        #lessons = response.css("td.TTcell::text").getall()
-        #cname = response.css("b::text").getall()
-        #print(response.css("div::text").getall())
-        #print("something",response.css("div.PlaceHolder").getall())
-        #print("something",response.text)
-        #print("something",response.css("tr").getall())
-        #print(response.xpath("//select/option/text()").getall())
-        
-        
-        #print("table_rows:", table_rows)
-        #print("lessons:", lessons)
-
-        """day = response.css("td.CTitle::text").get()
-        first_class = response.css("td.TTLesson::text").get()
-        print("Day:", day)
-        print("first_class:", first_class)"""
