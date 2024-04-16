@@ -31,7 +31,7 @@ class SchoolSpider(scrapy.Spider):
 
         yield FormRequest.from_response(response, formdata=requests, callback=self.parse_school)
 
-    def parse_school(self, response):
+    def parse_school(self, response,):
         place_holder_data = response.css("div.PlaceHolder").getall()
         self.logger.info(f"current class: {response.css('select#dnn_ctr3413_TimeTableView_ClassesList option[selected]::text').get()}")
 
@@ -39,7 +39,8 @@ class SchoolSpider(scrapy.Spider):
         #self.logger.info(f"Place holder data: {place_holder_data}")
 
         if place_holder_data:
-            with open(r"C:\Users\Desktop\OneDrive\erez\School_website_scraper\school-sebsite-scraper\school.html", "w", encoding="utf-8") as f:
+            with open(f"C:\\Users\\Desktop\\OneDrive\\erez\\School_website_scraper\\school-sebsite-scraper\\htmls\\class{self.classNumber}.html", "w", encoding="utf-8") as f:
                 f.write("\n".join(place_holder_data))
+            self.logger.info(f"Data saved to class{self.classNumber}.html")
         else:
             self.logger.warning("No data found in div.PlaceHolder")
