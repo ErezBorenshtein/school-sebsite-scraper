@@ -106,5 +106,5 @@ def create_csv():
   print("files deleted")
 
 
-if __name__ == "__main__":
-  create_csv()
+#if __name__ == "__main__":
+#  create_csv()
