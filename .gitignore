@@ -1,2 +1,5 @@
 #The scraper virtual environment
 scraperEnv
+
+#My discord bot token
+token.txt
