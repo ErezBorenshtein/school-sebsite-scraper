@@ -129,7 +129,7 @@ async def on_message(message):
 
     if message.content.startswith('!empty classes'):
         new_message = message.content.split(" ")
-        if len(new_message) > 2 and new_message[2].lower() != "today":     #*empty classes [Day] [hour]
+        if len(new_message) > 2 and new_message[2].lower() != "today": #*empty classes [Day] [hour]
             classes = get_empty_rooms("schedule.csv", "class_numbers.json",new_message[2], new_message[3])
 
             embed = discord.Embed(
@@ -162,7 +162,7 @@ async def on_message(message):
                     channel = client.get_channel(channel_id)
                     await channel.send(embed=embed)
                 else:
-                    await message.channel.send("Today is Saturday or school has finished today")
+                    await message.channel.send("school has finished today")
 
 @tasks.loop(hours=24)
 async def scrape():
@@ -172,7 +172,6 @@ async def scrape():
     except Exception as e:
         print(f"Error occurred during scraping: {e}")
         return
-
 
 #TOKEN = os.environ['TOKEN'] #! For my replit server
 with open("token.txt", "r") as f:
