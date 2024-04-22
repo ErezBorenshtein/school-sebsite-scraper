@@ -1,7 +1,7 @@
 School Schedule Scraper & Discord Bot
 
 Description:
-This project is designed to scrape my school schedule using Scrapy, a web crawling and web scraping framework in Python, and utilizes a Discord bot to display empty rooms for each hour. By integrating Scrapy with a Discord bot, this tool provides a convenient way to visualize and access room availability throughout your school day.
+This project is designed to scrape my school schedule using Scrapy, a web crawling and web scraping framework in Python, and utilizes a Discord bot to display empty rooms for each hour. By integrating Scrapy with a Discord bot, this tool provides a convenient way to visualize and access room availability throughout my school day.
 
 Schedule Scraping: The Scrapy framework is employed to extract schedule information from my school's website.
 Room Availability: The Discord bot analyzes the scraped data to identify empty rooms for each hour of the school day.
@@ -16,7 +16,7 @@ Install the required dependencies using pip:
 pip install -r requirements.txt
 
 Change the token from the file token.txt.
-Once the bot is running and connected to your Discord server, you can interact with it using commands. Here are some example commands:
+Once the bot is running and connected to your Discord server, you can interact with it using commands. Here are the commands:
 
 !help: show all of the commands
 !empty classes [day] [hour]: Displays the empty rooms for a specific day hour.
@@ -24,7 +24,7 @@ Once the bot is running and connected to your Discord server, you can interact w
 !empty rooms: Displays the empty rooms for today in the closest(next) hour
 
 Contributing:
-Contributions are welcome! If you find any issues or have ideas for improvements.
+Contributions are welcome! If you find any issues or have ideas for improvements feel free to open an issue or submit a pull request.
 
 Disclaimer:
 This project works only on my school's website.
