@@ -1,46 +1,39 @@
 import scrapy
 from scrapy import FormRequest
+from scrapy.utils.response import open_in_browser
+import pandas as pd
+import re
+
 
 class SchoolSpider(scrapy.Spider):
     name = "schoolspider"
-    allowed_domains = ["ironih.iscool.co.il"]
-    start_urls = ["https://ironih.iscool.co.il"]
+    start_urls = ["https://beitbiram.iscool.co.il/default.aspx"]
 
     def __init__(self, classNumber=1, *args, **kwargs):
         super(SchoolSpider, self).__init__(*args, **kwargs)
         self.classNumber = classNumber
+        self.final_df = pd.DataFrame
 
     def parse(self, response):
-        classes_values = response.css("select#dnn_ctr3413_TimeTableView_ClassesList option::attr(value)").extract()
+        classes_values = response.css("select#dnn_ctr7126_TimeTableView_ClassesList option::attr(value)").extract()
 
-        print("classes_values", classes_values, "len: ", len(classes_values))
+        for value in classes_values:
+            data = {
+                '__EVENTTARGET': 'dnn$ctr7126$TimeTableView$btnTimeTable',
+                'dnn$ctr7126$TimeTableView$ClassesList': value,
+                'dnn$ctr7126$TimeTableView$ControlId': "8",
+            }
+            yield FormRequest.from_response(response, formdata=data, callback=self.parse_school)
 
-        if len(classes_values) == 0:
-            self.logger.error("No classes found")
-            return
-        
-        requests = {
-            '__EVENTTARGET': 'dnn$ctr3413$TimeTableView$btnTimeTable',
-            'dnn$ctr3413$TimeTableView$ClassesList': classes_values[int(self.classNumber)-1],
-            'dnn$ctr3413$TimeTableView$ControlId':'1',
-        }
-        self.logger.info(f"class value: {classes_values[int(self.classNumber)]}")
+    def parse_school(self, response):
+        def extract_text_in_parentheses(text):
+            pattern = r'\(.*?\)'
+            matches = re.findall(pattern, text)
+            return matches
 
-        # Debugging info
-       # self.logger.info(f"Form data: {requests}")
-
-        yield FormRequest.from_response(response, formdata=requests, callback=self.parse_school)
-
-    def parse_school(self, response,):
-        place_holder_data = response.css("div.PlaceHolder").getall()
-        self.logger.info(f"current class: {response.css('select#dnn_ctr3413_TimeTableView_ClassesList option[selected]::text').get()}")
-
-        # Debugging info
-        #self.logger.info(f"Place holder data: {place_holder_data}")
-
-        if place_holder_data:
-            with open(f"C:\\Users\\Desktop\\OneDrive\\erez\\School_website_scraper\\school-sebsite-scraper\\htmls\\class{self.classNumber}.html", "w", encoding="utf-8") as f:
-                f.write("\n".join(place_holder_data))
-            self.logger.info(f"Data saved to class{self.classNumber}.html")
-        else:
-            self.logger.warning("No data found in div.PlaceHolder")
+        dfs = pd.read_html(response.text)
+        for i, df in enumerate(dfs):
+            if i == 11:
+                df.drop(columns=0, inplace=True)
+                df.drop(0, inplace=True)
+                df = df.applymap(lambda x: extract_text_in_parentheses(str(x)))
