@@ -1,8 +1,5 @@
-beautifulsoup4~=4.12.3
-csvkit
 discord.py
-pytz~=2024.1
-scrapy~=2.11.1
-
 pandas~=2.2.2
-itemadapter~=0.8.0
+scrapy~=2.11.1
+pytz~=2024.1
+
