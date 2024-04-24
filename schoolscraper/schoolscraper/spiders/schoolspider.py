@@ -22,8 +22,8 @@ class SchoolSpider(scrapy.Spider):
 
         for value in classes_values:
             data = {
-                '__EVENTTARGET': 'dnn$ctr7126$TimeTableView$btnTimeTable',
                 'dnn$ctr7126$TimeTableView$ClassesList': value,
+                'dnn$ctr7126$TimeTableView$MainControl$WeekShift': "0",
                 'dnn$ctr7126$TimeTableView$ControlId': "8"
             }
             self.log(f'Now logging {value}..')
@@ -31,19 +31,38 @@ class SchoolSpider(scrapy.Spider):
             sleep(2.0)
 
     def parse_school(self, response):
-        def extract_text_in_parentheses(text):
+        def extract_text_in_parentheses(text):  # remove everything that is not inside parenthesis
             pattern = r'\(.*?\)'
             matches = re.findall(pattern, text)
             return matches
 
         dfs = pd.read_html(response.text)
         for i, df in enumerate(dfs):
-            if i == 11:  # Assuming the 11th DataFrame contains schedule data
+            if i == 11:
                 df.drop(columns=0, inplace=True)
                 df.drop(0, inplace=True)
-                df = df.applymap(lambda x: extract_text_in_parentheses(str(x)))
-                self.final_dfs.append(df)
+                df = df.map(lambda x: extract_text_in_parentheses(str(x)))  # keep only the classes
+                self.final_dfs.append(df)  # append the dataframe into the array of final dataframes
 
     def closed(self, reason):
-        for i, df in enumerate(self.final_dfs):
-            df.to_csv(f'schedule_{i}.csv', index=False)
+        def combine_dataframes(dataframes):
+            # Create an empty dataframe to store the combined data
+            combined_df = pd.DataFrame()
+
+            # Iterate over each dataframe in the input array
+            for dataframe in dataframes:
+                # Iterate over each row in the dataframe
+                for index, row in dataframe.iterrows():
+                    # Iterate over each column in the row
+                    for col_name, cell_value in row.items():
+                        if isinstance(cell_value, list):
+                            # if it's a list convert to string
+                            combined_df.at[index, col_name] = ', '.join(map(str, cell_value))
+                        else:
+                            # Otherwise store value directly
+                            combined_df.at[index, col_name] = cell_value
+
+            return combined_df
+
+        df = combine_dataframes(self.final_dfs)  # combine all the dataframes
+        df.to_csv("result.csv")  # write to file named result.csv
