@@ -1,3 +1,5 @@
+from time import sleep
+
 import scrapy
 from scrapy import FormRequest
 import pandas as pd
@@ -26,6 +28,7 @@ class SchoolSpider(scrapy.Spider):
             }
             self.log(f'Now logging {value}..')
             yield FormRequest.from_response(response, formdata=data, callback=self.parse_school, meta={'value': value})
+            sleep(2.0)
 
     def parse_school(self, response):
         def extract_text_in_parentheses(text):
