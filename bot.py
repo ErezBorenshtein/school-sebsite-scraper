@@ -128,7 +128,7 @@ async def on_message(message):
     if message.content.startswith('!empty classes'):
         new_message = message.content.split(" ")
         if len(new_message) > 2 and new_message[2].lower() != "today": #*empty classes [Day] [hour]
-            classes = get_empty_rooms("schedule.csv", "class_numbers.json",new_message[2], new_message[3])
+            classes = get_empty_rooms("schedule.csv", "available_classes_ironih.json", new_message[2], new_message[3])
 
             embed = discord.Embed(
                 title= f"The empty rooms in {new_message[2]} at hour {new_message[3]} are:",
@@ -140,7 +140,7 @@ async def on_message(message):
 
         else:
             if len(new_message) == 4:  #*empty classes today [hour]
-                classes = get_empty_rooms("schedule.csv", "class_numbers.json",get_day(), new_message[3])
+                classes = get_empty_rooms("schedule.csv", "available_classes_ironih.json", get_day(), new_message[3])
                 embed = discord.Embed(
                     title= f"The empty rooms today({get_day()}) at hour {new_message[3]} are:",
                     description=', '.join(classes),
@@ -151,7 +151,7 @@ async def on_message(message):
             else:
                 closest_hour = get_hour()
                 if closest_hour is not None and get_day() != "Saturday":
-                    classes = get_empty_rooms("schedule.csv", "class_numbers.json",get_day(), closest_hour)
+                    classes = get_empty_rooms("schedule.csv", "available_classes_ironih.json", get_day(), closest_hour)
                     embed = discord.Embed(
                         title= f"The empty rooms today({get_day()}) at hour {closest_hour} are:",
                         description=', '.join(classes),

@@ -21,7 +21,7 @@ contacts_list = read_csv_and_split(csv_filename)
 class_numbers = sorted(list(set(contacts_list)))  # Get unique class numbers sorted in ascending order
 
 # Save class_numbers as a JSON file
-json_filename = 'class_numbers.json'
+json_filename = 'available_classes_ironih.json'
 with open(json_filename, 'w') as jsonfile:
     json.dump(class_numbers, jsonfile)
 
