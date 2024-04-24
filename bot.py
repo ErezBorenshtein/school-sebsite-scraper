@@ -2,12 +2,10 @@ import json
 import csv
 import discord
 from discord.ext import tasks
-import os
 import datetime
 from scrape import create_csv
 import pytz
-from keepalive import keep_alive
-from time import sleep
+import os
 
 
 def get_empty_rooms(csv_file, json_file, day="Sunday", hour=1):
