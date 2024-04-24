@@ -1,10 +1,11 @@
-#The scraper virtual environment
-scraperEnv
-
-#My discord bot token
+# My discord bot token
 token.txt
 
-#The logo
+# The logo
 Logo.jpg
 
+# The .idea folder
 /.idea
+
+# All the files with .csv extension name
+.csv
