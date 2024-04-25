@@ -1,5 +1,7 @@
-discord.py
 pandas~=2.2.2
 scrapy~=2.11.1
 pytz~=2024.1
 
+
+beautifulsoup4~=4.12.3
+itemadapter~=0.8.0
