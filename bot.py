@@ -6,7 +6,7 @@ import pytz
 import discord
 from discord.ext import tasks
 
-from scrape import create_csv
+import scraper_trigger as scraper
 
 
 def get_empty_rooms(csv_file, json_file, day="Sunday", hour=1):
@@ -99,6 +99,7 @@ async def on_ready():
     print(f"We have logged in as {client.user}")
     scrape.start()
 
+
 @client.event
 async def on_message(message):
     channel_id = 1229734808507256835  # My server channel id
@@ -156,11 +157,7 @@ async def on_message(message):
 @tasks.loop(hours=24)
 async def scrape():
     print("scraping...")
-    try:
-        create_csv()
-    except Exception as e:
-        print(f"Error occurred during scraping: {e}")
-        return
+    scraper.start()
 
 
 TOKEN = open('token.txt').read()
