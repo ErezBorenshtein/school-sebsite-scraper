@@ -97,10 +97,7 @@ client = discord.Client(intents=discord.Intents.all())
 @client.event
 async def on_ready():
     print(f"We have logged in as {client.user}")
-    print(1)
     scrape.start()
-    print(2)
-
 
 @client.event
 async def on_message(message):
