@@ -52,7 +52,10 @@ def get_day():
 
 
 def get_hour():
+    # Define Israel timezone
     israel_tz = pytz.timezone('Israel')
+
+    # Get current time in Israel
     current_time_israel = datetime.datetime.now(israel_tz)
     current_time = current_time_israel.time()
 
@@ -71,23 +74,19 @@ def get_hour():
         11: (datetime.time(16, 45), datetime.time(17, 30)),
     }
 
-    # Find the closest hour in the school schedule
-    closest_hour = None
-    min_difference = float('inf')
-    try:
-        for hour, (start_time, end_time) in school_schedule.items():
-            if start_time <= current_time <= end_time:
-                return hour
-            else:
-                difference = abs(
-                    (start_time.hour * 60 + start_time.minute) - (current_time.hour * 60 + current_time.minute))
-                if difference < min_difference:
-                    min_difference = difference
-                    closest_hour = hour
+    # Find the current hour in the school schedule
+    for hour, (start_time, end_time) in school_schedule.items():
+        if start_time <= current_time <= end_time:
+            return hour
 
-    except Exception as e:
-        print(f"Error occurred: {e}")
-        return closest_hour
+    # If current time is not within any scheduled hour, find the closest hour
+    min_difference = float('inf')
+    closest_hour = None
+    for hour, (start_time, _) in school_schedule.items():
+        difference = abs((start_time.hour * 60 + start_time.minute) - (current_time.hour * 60 + current_time.minute))
+        if difference < min_difference:
+            min_difference = difference
+            closest_hour = hour
 
     return closest_hour
 
