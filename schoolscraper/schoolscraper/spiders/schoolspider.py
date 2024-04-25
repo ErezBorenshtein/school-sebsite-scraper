@@ -32,7 +32,7 @@ class SchoolSpider(scrapy.Spider):
 
     def parse_school(self, response):
         def extract_text_in_parentheses(text):  # remove everything that is not inside parenthesis
-            pattern = r'\(.*?\)'
+            pattern = r'\(([^)]*)\)'
             matches = re.findall(pattern, text)
             return matches
 
