@@ -45,14 +45,9 @@ def get_empty_rooms(csv_file, json_file, day="Sunday", hour=1):
 
 
 def get_day():
-    israel_tz = pytz.timezone('Israel')
-
-    current_date_israel = datetime.datetime.now(israel_tz)
-
-    day_of_week_int = current_date_israel.weekday() + 1  # ! I don't know why the +1 is needed
-
-    day_of_week_str = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][day_of_week_int]
-
+    israel_timezone = pytz.timezone('Israel')
+    current_date_israel = datetime.datetime.now(israel_timezone)
+    day_of_week_str = current_date_israel.strftime('%A')
     return day_of_week_str
 
 
