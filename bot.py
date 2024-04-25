@@ -2,8 +2,8 @@ import csv
 import datetime
 import json
 
-import discord
 import pytz
+import discord
 from discord.ext import tasks
 
 from scrape import create_csv
@@ -166,8 +166,6 @@ async def scrape():
         return
 
 
-# TOKEN = os.environ['TOKEN'] #! For my replit server
-with open("token.txt", "r") as f:
-    TOKEN = f.read()
-# keep_alive() #! To keep the bot alive
+TOKEN = open('token.txt').read()
+
 client.run(TOKEN)
