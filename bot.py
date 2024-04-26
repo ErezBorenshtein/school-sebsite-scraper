@@ -2,8 +2,8 @@ import csv
 import datetime
 import json
 
-import pytz
 import discord
+import constants
 from discord.ext import tasks
 
 import scraper_trigger as scraper
@@ -45,44 +45,25 @@ def get_empty_rooms(csv_file, json_file, day="Sunday", hour=1):
 
 
 def get_day():
-    israel_timezone = pytz.timezone('Israel')
-    current_date_israel = datetime.datetime.now(israel_timezone)
+    current_date_israel = datetime.datetime.now(constants.ISRAEL_TIMEZONE)
     day_of_week_str = current_date_israel.strftime('%A')
     return day_of_week_str
 
 
 def get_hour():
-    # Define Israel timezone
-    israel_tz = pytz.timezone('Israel')
-
     # Get current time in Israel
-    current_time_israel = datetime.datetime.now(israel_tz)
+    current_time_israel = datetime.datetime.now(constants.ISRAEL_TIMEZONE)
     current_time = current_time_israel.time()
 
-    # Define the school schedule hours
-    school_schedule = {
-        1: (datetime.time(8, 15), datetime.time(9, 0)),
-        2: (datetime.time(9, 0), datetime.time(9, 50)),
-        3: (datetime.time(10, 10), datetime.time(10, 55)),
-        4: (datetime.time(11, 0), datetime.time(11, 45)),
-        5: (datetime.time(11, 50), datetime.time(12, 35)),
-        6: (datetime.time(12, 55), datetime.time(13, 35)),
-        7: (datetime.time(13, 40), datetime.time(14, 25)),
-        8: (datetime.time(14, 30), datetime.time(15, 15)),
-        9: (datetime.time(15, 15), datetime.time(16, 0)),
-        10: (datetime.time(16, 0), datetime.time(16, 45)),
-        11: (datetime.time(16, 45), datetime.time(17, 30)),
-    }
-
     # Find the current hour in the school schedule
-    for hour, (start_time, end_time) in school_schedule.items():
+    for hour, (start_time, end_time) in constants.SCHOOL_SCHEDULE.items():
         if start_time <= current_time <= end_time:
             return hour
 
     # If current time is not within any scheduled hour, find the closest hour
     min_difference = float('inf')
     closest_hour = None
-    for hour, (start_time, _) in school_schedule.items():
+    for hour, (start_time, _) in constants.SCHOOL_SCHEDULE.items():
         difference = abs((start_time.hour * 60 + start_time.minute) - (current_time.hour * 60 + current_time.minute))
         if difference < min_difference:
             min_difference = difference
@@ -102,7 +83,6 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    channel_id = 1229734808507256835  # My server channel id
     if message.author == client.user:
         return
 
@@ -113,7 +93,7 @@ async def on_message(message):
             color=discord.Color.blue()
         )
 
-        channel = client.get_channel(channel_id)
+        channel = client.get_channel(constants.CHANNEL_ID)
         await channel.send(embed=embed)
 
     if message.content.startswith('!empty classes'):
@@ -126,7 +106,7 @@ async def on_message(message):
                 description=', '.join(classes),
                 color=discord.Color.blue())
 
-            channel = client.get_channel(channel_id)
+            channel = client.get_channel(constants.CHANNEL_ID)
             await channel.send(embed=embed)
 
         else:
@@ -137,7 +117,7 @@ async def on_message(message):
                     description=', '.join(classes),
                     color=discord.Color.blue())
 
-                channel = client.get_channel(channel_id)
+                channel = client.get_channel(constants.CHANNEL_ID)
                 await channel.send(embed=embed)
             else:
                 closest_hour = get_hour()
@@ -148,7 +128,7 @@ async def on_message(message):
                         description=', '.join(classes),
                         color=discord.Color.blue()
                     )
-                    channel = client.get_channel(channel_id)
+                    channel = client.get_channel(constants.CHANNEL_ID)
                     await channel.send(embed=embed)
                 else:
                     await message.channel.send("school has finished today")
